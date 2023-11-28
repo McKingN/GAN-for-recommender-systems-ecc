@@ -438,6 +438,7 @@ def main(arguments):
             train_mode = arg[2:]
 
     if build_dataset:
+        print(dataset)
         dataset_str = dataset if isinstance(dataset, str) else dataset.DATASET_NAME
         print('Building ' + dataset_str + '. Skipping other arguments! You need to run this script without --build-dataset to run experiments!')
         load_URMs(dataset, dataset_kwargs)
