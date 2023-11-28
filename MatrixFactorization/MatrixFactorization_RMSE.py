@@ -141,7 +141,7 @@ class FunkSVD(Recommender):
         #ranking = np.fliplr(ranking)
         #ranking = ranking[:,0:n]
 
-        ranking = np.zeros((scores_array.shape[0],n), dtype=np.int)
+        ranking = np.zeros((scores_array.shape[0],n), dtype=np.int_)
 
         for row_index in range(scores_array.shape[0]):
             scores = scores_array[row_index]

@@ -129,9 +129,9 @@ cdef class MatrixFactorization_Cython_Epoch:
         self.MSE_sample_negative_interactions_flag = self.MSE_negative_interactions_quota != 0.0
 
 
-        self.mini_batch_sampled_items = np.zeros(self.batch_size, dtype=np.int)
-        self.mini_batch_sampled_items_negative = np.zeros(self.batch_size, dtype=np.int)
-        self.mini_batch_sampled_users = np.zeros(self.batch_size, dtype=np.int)
+        self.mini_batch_sampled_items = np.zeros(self.batch_size, dtype=np.int_)
+        self.mini_batch_sampled_items_negative = np.zeros(self.batch_size, dtype=np.int_)
+        self.mini_batch_sampled_users = np.zeros(self.batch_size, dtype=np.int_)
 
         self.URM_train_indices = URM_train.indices
         self.URM_train_data = np.array(URM_train.data, dtype=np.float64)

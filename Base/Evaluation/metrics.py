@@ -151,7 +151,7 @@ class Gini_Diversity(Metrics_Object):
     def __init__(self, n_items, ignore_items):
         super(Gini_Diversity, self).__init__()
         self.recommended_counter = np.zeros(n_items, dtype=np.float)
-        self.ignore_items = ignore_items.astype(np.int).copy()
+        self.ignore_items = ignore_items.astype(np.int_).copy()
 
     def add_recommendations(self, recommended_items_ids):
         if len(recommended_items_ids) > 0:
@@ -201,7 +201,7 @@ class Diversity_Herfindahl(Metrics_Object):
     def __init__(self, n_items, ignore_items):
         super(Diversity_Herfindahl, self).__init__()
         self.recommended_counter = np.zeros(n_items, dtype=np.float)
-        self.ignore_items = ignore_items.astype(np.int).copy()
+        self.ignore_items = ignore_items.astype(np.int_).copy()
 
     def add_recommendations(self, recommended_items_ids):
         if len(recommended_items_ids) > 0:
@@ -251,7 +251,7 @@ class Shannon_Entropy(Metrics_Object):
     def __init__(self, n_items, ignore_items):
         super(Shannon_Entropy, self).__init__()
         self.recommended_counter = np.zeros(n_items, dtype=np.float)
-        self.ignore_items = ignore_items.astype(np.int).copy()
+        self.ignore_items = ignore_items.astype(np.int_).copy()
 
     def add_recommendations(self, recommended_items_ids):
         if len(recommended_items_ids) > 0:
@@ -495,7 +495,7 @@ class Diversity_MeanInterList(Metrics_Object):
     # for each couple of users, except the diagonal. It is VERY computationally expensive
     # We can move the 1 and cutoff outside of the summation. Remember to exclude the diagonal
     # co_counts = URM_predicted.dot(URM_predicted.T)
-    # co_counts[np.arange(0, n_user, dtype=np.int):np.arange(0, n_user, dtype=np.int)] = 0
+    # co_counts[np.arange(0, n_user, dtype=np.int_):np.arange(0, n_user, dtype=np.int_)] = 0
     # diversity = (n_user**2 - n_user) - co_counts.sum()/self.cutoff
 
     # If we represent the summation of co_counts separating it for each item, we will have:

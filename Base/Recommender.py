@@ -23,10 +23,10 @@ class Recommender(object):
         self.normalize = False
 
         self.filterTopPop = False
-        self.filterTopPop_ItemsID = np.array([], dtype=np.int)
+        self.filterTopPop_ItemsID = np.array([], dtype=np.int_)
 
         self.items_to_ignore_flag = False
-        self.items_to_ignore_ID = np.array([], dtype=np.int)
+        self.items_to_ignore_ID = np.array([], dtype=np.int_)
 
 
     def fit(self):
@@ -39,12 +39,12 @@ class Recommender(object):
     def set_items_to_ignore(self, items_to_ignore):
 
         self.items_to_ignore_flag = True
-        self.items_to_ignore_ID = np.array(items_to_ignore, dtype=np.int)
+        self.items_to_ignore_ID = np.array(items_to_ignore, dtype=np.int_)
 
     def reset_items_to_ignore(self):
 
         self.items_to_ignore_flag = False
-        self.items_to_ignore_ID = np.array([], dtype=np.int)
+        self.items_to_ignore_ID = np.array([], dtype=np.int_)
 
 
     def _remove_TopPop_on_scores(self, scores_batch):
@@ -165,8 +165,8 @@ class Recommender(object):
 
 
     def evaluateRecommendations(self, URM_test, at=5, minRatingsPerUser=1, exclude_seen=True,
-                                filterCustomItems = np.array([], dtype=np.int),
-                                filterCustomUsers = np.array([], dtype=np.int)):
+                                filterCustomItems = np.array([], dtype=np.int_),
+                                filterCustomUsers = np.array([], dtype=np.int_)):
         """
         Speed info:
         - Sparse weighgs: batch mode is 2x faster than sequential
