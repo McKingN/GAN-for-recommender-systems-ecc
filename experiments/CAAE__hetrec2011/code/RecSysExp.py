@@ -145,7 +145,7 @@ def get_similarity_params(dimensions, similarity):
 
 def make_dataset(dataset, specs):
     set_seed(seed)  # Need to set this so each dataset is created the same in any machine/order selected
-
+    print(dataset)
     if isinstance(dataset, str) and dataset in Movielens.urls.keys():
         reader = Movielens(version=dataset, **specs)
     else:
