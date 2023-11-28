@@ -159,6 +159,7 @@ def load_URMs(dataset, specs):
         for urm in urm_to_load:
             sets.append(sps.load_npz(urm))
     else:
+        print(dataset)
         sets = make_dataset(dataset, specs)
     return tuple(sets)
 
