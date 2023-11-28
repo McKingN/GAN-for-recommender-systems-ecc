@@ -425,7 +425,7 @@ def main(arguments):
     for arg in arguments:
         if arg == '--build-dataset':
             build_dataset = True
-            break
+            # break
         if arg in all_recommenders and algo is None:
             algo = arg
         if arg in similarities and sim is None:
