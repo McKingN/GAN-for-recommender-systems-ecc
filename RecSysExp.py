@@ -432,6 +432,7 @@ def main(arguments):
             sim = arg
             similarity_mode = sim
         if arg in name_datasets and dataset is None:
+            print(arg)
             dataset = all_datasets[name_datasets.index(arg)]
         if arg in ['--user', '--item'] and train_mode == '':
             train_mode = arg[2:]
