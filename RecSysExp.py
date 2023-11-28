@@ -66,7 +66,7 @@ dataset_kwargs = {
 }
 
 URM_suffixes = ['_URM_train.npz', '_URM_test.npz', '_URM_validation.npz', '_URM_train_small.npz', '_URM_early_stop.npz']
-all_datasets = ['1M', 'hetrec2011', 'LastFM']
+all_datasets = ['1M', 'hetrec2011', LastFM]
 name_datasets = [d if isinstance(d, str) else d.DATASET_NAME for d in all_datasets]
 all_recommenders = ['TopPop', 'PureSVD', 'ALS', 'SLIMBPR', 'ItemKNN', 'P3Alpha', 'CFGAN', 'CAAE', 'GANMF', 'DisGANMF']
 early_stopping_algos = [IALSRecommender, SLIM_BPR_Cython]
