@@ -87,7 +87,7 @@ class BaseMatrixFactorizationRecommender(BaseRecommender):
         self.use_bias = False
 
         self._cold_user_KNN_model_available = False
-        self._warm_user_KNN_mask = np.zeros(len(self._get_cold_user_mask()), dtype=np.bool)
+        self._warm_user_KNN_mask = np.zeros(len(self._get_cold_user_mask()), dtype=np.bool_)
 
 
 

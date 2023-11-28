@@ -35,7 +35,7 @@ class Coverage_Item(Metrics_Object):
 
     def __init__(self, n_items, ignore_items):
         super(Coverage_Item, self).__init__()
-        self.recommended_mask = np.zeros(n_items, dtype=np.bool)
+        self.recommended_mask = np.zeros(n_items, dtype=np.bool_)
         self.n_ignore_items = len(ignore_items)
 
     def add_recommendations(self, recommended_items_ids):
@@ -63,7 +63,7 @@ class Coverage_User(Metrics_Object):
 
     def __init__(self, n_users, ignore_users):
         super(Coverage_User, self).__init__()
-        self.users_mask = np.zeros(n_users, dtype=np.bool)
+        self.users_mask = np.zeros(n_users, dtype=np.bool_)
         self.n_ignore_users = len(ignore_users)
 
     def add_recommendations(self, recommended_items_ids, user_id):
@@ -161,7 +161,7 @@ class Gini_Diversity(Metrics_Object):
 
         recommended_counter = self.recommended_counter.copy()
 
-        recommended_counter_mask = np.ones_like(recommended_counter, dtype = np.bool)
+        recommended_counter_mask = np.ones_like(recommended_counter, dtype = np.bool_)
         recommended_counter_mask[self.ignore_items] = False
         recommended_counter_mask[recommended_counter == 0] = False
 
@@ -211,7 +211,7 @@ class Diversity_Herfindahl(Metrics_Object):
 
         recommended_counter = self.recommended_counter.copy()
 
-        recommended_counter_mask = np.ones_like(recommended_counter, dtype = np.bool)
+        recommended_counter_mask = np.ones_like(recommended_counter, dtype = np.bool_)
         recommended_counter_mask[self.ignore_items] = False
 
         recommended_counter = recommended_counter[recommended_counter_mask]
@@ -265,7 +265,7 @@ class Shannon_Entropy(Metrics_Object):
 
         # Ignore from the computation both ignored items and items with zero occurrence.
         # Zero occurrence items will have zero probability and will not change the result, butt will generate nans if used in the log
-        recommended_counter_mask = np.ones_like(recommended_counter, dtype = np.bool)
+        recommended_counter_mask = np.ones_like(recommended_counter, dtype = np.bool_)
         recommended_counter_mask[self.ignore_items] = False
         recommended_counter_mask[recommended_counter == 0] = False
 
