@@ -160,6 +160,7 @@ def load_URMs(dataset, specs):
             sets.append(sps.load_npz(urm))
     else:
         print(dataset)
+        print(specs)
         sets = make_dataset(dataset, specs)
     return tuple(sets)
 
