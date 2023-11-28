@@ -121,7 +121,7 @@ def set_seed(seed):
     # Seed for reproducibility of results and consistent initialization of weights/splitting of dataset
     random.seed(seed)
     np.random.seed(seed)
-    tf.set_random_seed(seed)
+    tf.random.set_seed(seed)
 
 
 def get_similarity_params(dimensions, similarity):

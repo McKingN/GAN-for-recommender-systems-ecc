@@ -60,7 +60,7 @@ from MatrixFactorization.Cython.MatrixFactorization_Cython import MatrixFactoriz
 seed = 1337
 # random.seed(seed)
 # np.random.seed(seed)
-# tf.set_random_seed(seed)
+# tf.random.set_seed(seed)
 
 # Generic parameters for each dataset
 dataset_kwargs = {}
@@ -89,7 +89,7 @@ def set_seed(seed):
     seed = 1337
     random.seed(seed)
     np.random.seed(seed)
-    tf.set_random_seed(seed)
+    tf.random.set_seed(seed)
 
 
 def make_dataset(dataset, specs):
