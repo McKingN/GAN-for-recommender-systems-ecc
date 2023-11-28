@@ -423,8 +423,6 @@ def main(arguments):
     print(arguments)
 
     for arg in arguments:
-        if arg in name_datasets and dataset is None:
-            dataset = all_datasets[name_datasets.index(arg)]
         if arg == '--build-dataset':
             build_dataset = True
             break
@@ -433,6 +431,8 @@ def main(arguments):
         if arg in similarities and sim is None:
             sim = arg
             similarity_mode = sim
+        if arg in name_datasets and dataset is None:
+            dataset = all_datasets[name_datasets.index(arg)]
         if arg in ['--user', '--item'] and train_mode == '':
             train_mode = arg[2:]
 
