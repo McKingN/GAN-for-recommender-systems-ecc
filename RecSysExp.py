@@ -420,6 +420,8 @@ def main(arguments):
     dataset = None
     build_dataset = False
 
+    print(arguments)
+
     for arg in arguments:
         if arg == '--build-dataset':
             build_dataset = True
