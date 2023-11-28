@@ -22,7 +22,7 @@ import scipy.sparse as sps
 
 warnings.filterwarnings('ignore', category=UserWarning)
 warnings.filterwarnings('ignore', category=FutureWarning)
-tf.logging.set_verbosity(tf.logging.ERROR)
+tf._logging.set_verbosity(tf._logging.ERROR)
 
 # Supress Tensorflow logs
 os.environ['KMP_WARNINGS'] = '0'
