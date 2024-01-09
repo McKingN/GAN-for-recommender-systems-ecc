@@ -68,17 +68,17 @@ class GANMF(BaseRecommender):
                                            name='encoding')
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
-            # loss = tf.losses.mean_squared_error(input_data, decoding)
+            loss = tf.losses.mean_squared_error(input_data, decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
             #Wassertein
-                real_loss = tf.reduce_mean(tf.abs(input_data - decoding))
-                fake_loss = tf.reduce_mean(tf.abs(input_data - tf.layers.dense(encoding, units=input_data.shape[1], 
-                                                                                kernel_initializer=glorot_uniform,
-                                                                                name='decoding')))
-            loss = real_loss - 0.01 * fake_loss
+            #     real_loss = tf.reduce_mean(tf.abs(input_data - decoding))
+            #     fake_loss = tf.reduce_mean(tf.abs(input_data - tf.layers.dense(encoding, units=input_data.shape[1], 
+            #                                                                     kernel_initializer=glorot_uniform,
+            #                                                                     name='decoding')))
+            # loss = real_loss - 0.01 * fake_loss
 
-                # Add diversity term to the loss function
-            k_t += 0.001 * (gamma * real_loss - fake_loss)
+            #     # Add diversity term to the loss function
+            # k_t += 0.001 * (gamma * real_loss - fake_loss)
             return encoding, loss
 
         ######################
