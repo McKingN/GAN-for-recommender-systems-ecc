@@ -73,7 +73,7 @@ class GANMF(BaseRecommender):
             #Wassertein
                 real_loss = tf.reduce_mean(tf.abs(input_data - decoding))
                 fake_loss = tf.reduce_mean(tf.abs(input_data - tf.layers.dense(encoding, units=input_data.shape[1], 
-                                                                                kernel_initializer=tf.glorot_uniform_initializer(),
+                                                                                kernel_initializer=glorot_uniform,
                                                                                 name='decoding_fake_loss')))
                 loss = real_loss - k_t * fake_loss
 
