@@ -19,6 +19,7 @@ from datetime import datetime
 from Base.BaseRecommender import BaseRecommender
 from Utils_ import EarlyStoppingScheduler, save_weights
 
+k_t = 0  # Vous pouvez initialiser k_t à 0
 
 class GANMF(BaseRecommender):
     RECOMMENDER_NAME = 'GANMF'
@@ -59,9 +60,9 @@ class GANMF(BaseRecommender):
         ########################
         # AUTOENCODER FUNCTION #
         ########################
-        k_t = 0  # Vous pouvez initialiser k_t à 0
-        gamma = 0.5  # C'est la "diversité" que vous voulez maintenir
         def autoencoder(input_data):
+            global k_t
+            gamma = 0.5 
             with tf.variable_scope('autoencoder', reuse=tf.AUTO_REUSE):
                 encoding = tf.layers.dense(input_data, units=emb_dim, kernel_initializer=glorot_uniform,
                                            name='encoding')
@@ -75,8 +76,9 @@ class GANMF(BaseRecommender):
                                                                             kernel_initializer=tf.glorot_uniform_initializer(),
                                                                             name='decoding_fake')))
             loss = real_loss - k_t * fake_loss
-            # Mise à jour de k_t
-            k_t = k_t + 0.001 * (gamma * real_loss - fake_loss)
+
+            # Add diversity term to the loss function
+            k_t += 0.001 * (gamma * real_loss - fake_loss)
             return encoding, loss
 
         ######################
