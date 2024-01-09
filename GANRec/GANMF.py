@@ -74,7 +74,7 @@ class GANMF(BaseRecommender):
             real_loss = tf.reduce_mean(tf.abs(input_data - decoding))
             fake_loss = tf.reduce_mean(tf.abs(input_data - tf.layers.dense(encoding, units=input_data.shape[1], 
                                                                             kernel_initializer=tf.glorot_uniform_initializer(),
-                                                                            name='decoding_fake')))
+                                                                            name='decoding_fake_loss22')))
             loss = real_loss - k_t * fake_loss
 
             # Add diversity term to the loss function
