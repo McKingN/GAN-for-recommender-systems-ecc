@@ -59,14 +59,24 @@ class GANMF(BaseRecommender):
         ########################
         # AUTOENCODER FUNCTION #
         ########################
+        k_t = 0  # Vous pouvez initialiser k_t à 0
+        gamma = 0.5  # C'est la "diversité" que vous voulez maintenir
         def autoencoder(input_data):
             with tf.variable_scope('autoencoder', reuse=tf.AUTO_REUSE):
                 encoding = tf.layers.dense(input_data, units=emb_dim, kernel_initializer=glorot_uniform,
                                            name='encoding')
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
-            loss = tf.losses.mean_squared_error(input_data, decoding)
+            # loss = tf.losses.mean_squared_error(input_data, decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
+            #Wassertein
+            real_loss = tf.reduce_mean(tf.abs(input_data - decoding))
+            fake_loss = tf.reduce_mean(tf.abs(input_data - tf.layers.dense(encoding, units=input_data.shape[1], 
+                                                                            kernel_initializer=tf.glorot_uniform_initializer(),
+                                                                            name='decoding_fake')))
+            loss = real_loss - k_t * fake_loss
+            # Mise à jour de k_t
+            k_t = k_t + 0.001 * (gamma * real_loss - fake_loss)
             return encoding, loss
 
         ######################
