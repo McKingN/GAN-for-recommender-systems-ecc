@@ -3,6 +3,19 @@ import tensorflow as tf
 
 
 def autoencoder_wasserstein(input_data, decoding):
+    # config = tf.ConfigProto()
+    # sess = tf.Session(config=config)
+    # # Définir la valeur initiale de lambda
+    # lambda_init = 0.1
+    # # Définir lambda comme une variable tensorflow
+    # LAMBDA = tf.Variable(lambda_init, dtype=tf.float32, name='lambda')
+    # # Définir le facteur de décroissance de lambda
+    # lambda_decay = 0.9
+    # # Définir la valeur minimale de lambda
+    # lambda_min = 0.1
+    # # Définir une opération tensorflow pour mettre à jour lambda
+    # update_lambda = tf.assign(LAMBDA, tf.maximum(LAMBDA * lambda_decay, lambda_min))
+
     def discriminator(x):
         with tf.variable_scope('discriminator', reuse=tf.AUTO_REUSE):
             h1 = tf.layers.dense(x, units=64, activation='relu', name='h1')
@@ -27,6 +40,8 @@ def autoencoder_wasserstein(input_data, decoding):
     # Calculer la pénalité du gradient
     gradient_penalty = tf.reduce_mean((grad - 1.)**2)
     # Calculer la fonction de perte
-    LAMBDA = 0.001
+    LAMBDA = 0.0001
     loss = tf.reduce_mean(D_decoding - D_X + LAMBDA * gradient_penalty)
+    # Mettre à jour la valeur de lambda
+    # sess.run(update_lambda)
     return loss
