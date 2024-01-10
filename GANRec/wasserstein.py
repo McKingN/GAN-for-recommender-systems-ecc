@@ -18,7 +18,7 @@ def autoencoder_wasserstein(input_data, decoding):
     # Calculer le terme x_hat
     x_hat = epsilon * input_data + (1.0 - epsilon) * decoding
     # Calculer le score du discriminateur pour x_hat
-    D_X_hat = discriminator(x_hat, reuse=True)
+    D_X_hat = discriminator(x_hat)
     # Calculer le gradient du score du discriminateur par rapport à x_hat
     grad_D_X_hat = tf.gradients(D_X_hat, [x_hat])[0]
     # Calculer la norme du gradient
