@@ -115,10 +115,11 @@ class GANMF(BaseRecommender):
             d_reg=0, g_reg=0, m=1, recon_coefficient=1e-2, allow_worse=None, freq=None, after=0, metrics=['MAP'],
             sample_every=None, validation_evaluator=None, validation_set=None):
         
-        k_init = 0
-        lambda_init = 0.1
-        k = tf.Variable(k_init, dtype=tf.float32, name='k')
-        LAMBDA = tf.Variable(lambda_init, dtype=tf.float32, name='lambda_k')
+        with tf.variable_scope('klambd', reuse=tf.AUTO_REUSE):
+            k_init = 0
+            lambda_init = 0.1
+            k = tf.Variable(k_init, dtype=tf.float32, name='k')
+            LAMBDA = tf.Variable(lambda_init, dtype=tf.float32, name='lambda_k')
 
         # Construct the model config
         self.config = dict(locals())
