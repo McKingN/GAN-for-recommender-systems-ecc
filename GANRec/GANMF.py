@@ -18,6 +18,8 @@ import tensorflow as tf
 from datetime import datetime
 from Base.BaseRecommender import BaseRecommender
 from Utils_ import EarlyStoppingScheduler, save_weights
+import scipy.stats as stats
+from wasserstein import autoencoder_wasserstein
 
 k_t = 0  # Vous pouvez initialiser k_t à 0
 
@@ -58,27 +60,39 @@ class GANMF(BaseRecommender):
         glorot_uniform = tf.glorot_uniform_initializer()
 
         ########################
-        # AUTOENCODER FUNCTION #
+        # AUTOENCODER FUNCTION  GANMF#
+        ########################
+        # def autoencoder(input_data):
+        #     global k_t
+        #     gamma = 0.5 
+        #     with tf.variable_scope('autoencoder', reuse=tf.AUTO_REUSE):
+        #         encoding = tf.layers.dense(input_data, units=emb_dim, kernel_initializer=glorot_uniform,
+        #                                    name='encoding')
+        #         decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
+        #                                    name='decoding')
+        #     loss = tf.losses.mean_squared_error(input_data, decoding)
+        #     # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
+        #     #Wassertein
+        #     #     real_loss = tf.reduce_mean(tf.abs(input_data - decoding))
+        #     #     fake_loss = tf.reduce_mean(tf.abs(input_data - tf.layers.dense(encoding, units=input_data.shape[1], 
+        #     #                                                                     kernel_initializer=glorot_uniform,
+        #     #                                                                     name='decoding')))
+        #     # loss = real_loss - 0.01 * fake_loss
+
+        #     #     # Add diversity term to the loss function
+        #     # k_t += 0.001 * (gamma * real_loss - fake_loss)
+        #     return encoding, loss
+        
+        ########################
+        # AUTOENCODER FUNCTION  GANMF#
         ########################
         def autoencoder(input_data):
-            global k_t
-            gamma = 0.5 
             with tf.variable_scope('autoencoder', reuse=tf.AUTO_REUSE):
                 encoding = tf.layers.dense(input_data, units=emb_dim, kernel_initializer=glorot_uniform,
                                            name='encoding')
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
-            loss = tf.losses.mean_squared_error(input_data, decoding)
-            # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
-            #Wassertein
-            #     real_loss = tf.reduce_mean(tf.abs(input_data - decoding))
-            #     fake_loss = tf.reduce_mean(tf.abs(input_data - tf.layers.dense(encoding, units=input_data.shape[1], 
-            #                                                                     kernel_initializer=glorot_uniform,
-            #                                                                     name='decoding')))
-            # loss = real_loss - 0.01 * fake_loss
-
-            #     # Add diversity term to the loss function
-            # k_t += 0.001 * (gamma * real_loss - fake_loss)
+            loss = autoencoder_wasserstein(input_data, decoding)
             return encoding, loss
 
         ######################
