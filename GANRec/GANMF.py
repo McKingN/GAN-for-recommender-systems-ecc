@@ -111,16 +111,19 @@ class GANMF(BaseRecommender):
 
         self.autoencoder, self.generator = autoencoder, generator
 
-    def fit(self, num_factors=10, emb_dim=32, epochs=300, batch_size=32, d_lr=1e-4, g_lr=1e-4, d_steps=1, g_steps=1,
-            d_reg=0, g_reg=0, m=1, recon_coefficient=1e-2, allow_worse=None, freq=None, after=0, metrics=['MAP'],
-            sample_every=None, validation_evaluator=None, validation_set=None):
-        
+    def wass(self):
         with tf.variable_scope('klambd', reuse=tf.AUTO_REUSE):
             k_init = 0
             lambda_init = 0.1
             k = tf.Variable(k_init, dtype=tf.float32, name='k')
             LAMBDA = tf.Variable(lambda_init, dtype=tf.float32, name='lambda_k')
+        self.k, self.LAMBDA = k, LAMBDA
 
+    def fit(self, num_factors=10, emb_dim=32, epochs=300, batch_size=32, d_lr=1e-4, g_lr=1e-4, d_steps=1, g_steps=1,
+            d_reg=0, g_reg=0, m=1, recon_coefficient=1e-2, allow_worse=None, freq=None, after=0, metrics=['MAP'],
+            sample_every=None, validation_evaluator=None, validation_set=None):
+        
+        self.wass()
         # Construct the model config
         self.config = dict(locals())
         del self.config['self']
@@ -147,9 +150,6 @@ class GANMF(BaseRecommender):
         real_encoding, real_recon_loss = self.autoencoder(real_profile)
         fake_encoding, fake_recon_loss = self.autoencoder(fake_profile)
 
-        update_lambda = tf.assign(LAMBDA, tf.reduce_mean(fake_recon_loss)/tf.reduce_mean(real_recon_loss))
-        update_k = tf.assign(k, k + m * (LAMBDA * real_recon_loss - fake_recon_loss))
-
         # model parameters
         self.params = {}
         self.params['D'] = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope='autoencoder')
@@ -165,7 +165,7 @@ class GANMF(BaseRecommender):
         # losses
         # dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
         #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
-        dloss = real_recon_loss + tf.maximum(0.0, real_recon_loss - k * fake_recon_loss) + \
+        dloss = real_recon_loss + tf.maximum(0.0, real_recon_loss - self.k * fake_recon_loss) + \
                 d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
         gloss = (1 - recon_coefficient) * fake_recon_loss + \
                 recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
@@ -244,6 +244,8 @@ class GANMF(BaseRecommender):
 
             train_g_loss.append(mean_epoch_g_loss)
             train_d_loss.append(mean_epoch_d_loss)
+            update_lambda = tf.assign(self.LAMBDA, tf.reduce_mean(fake_recon_loss)/tf.reduce_mean(real_recon_loss))
+            update_k = tf.assign(self.k, self.k + m * (self.LAMBDA * real_recon_loss - fake_recon_loss))
             self.sess.run(update_lambda)
             self.sess.run(update_k)
 
