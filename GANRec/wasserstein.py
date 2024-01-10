@@ -27,6 +27,6 @@ def autoencoder_wasserstein(input_data, decoding):
     # Calculer la pénalité du gradient
     gradient_penalty = tf.reduce_mean((grad - 1.)**2)
     # Calculer la fonction de perte
-    LAMBDA = 0.1
+    LAMBDA = 0.001
     loss = tf.reduce_mean(D_decoding - D_X + LAMBDA * gradient_penalty)
     return loss
