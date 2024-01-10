@@ -19,7 +19,7 @@ from datetime import datetime
 from Base.BaseRecommender import BaseRecommender
 from Utils_ import EarlyStoppingScheduler, save_weights
 import scipy.stats as stats
-from wasserstein import autoencoder_wasserstein
+from GANRec.wasserstein import autoencoder_wasserstein
 
 k_t = 0  # Vous pouvez initialiser k_t à 0
 
