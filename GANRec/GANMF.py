@@ -119,8 +119,6 @@ class GANMF(BaseRecommender):
         lambda_init = 0.1
         k = tf.Variable(k_init, dtype=tf.float32, name='k')
         LAMBDA = tf.Variable(lambda_init, dtype=tf.float32, name='lambda_k')
-        update_lambda = tf.assign(LAMBDA, tf.reduce_mean(fake_recon_loss)/tf.reduce_mean(real_recon_loss))
-        update_k = tf.assign(k, k + m * (LAMBDA * real_recon_loss - fake_recon_loss))
 
         # Construct the model config
         self.config = dict(locals())
@@ -147,6 +145,9 @@ class GANMF(BaseRecommender):
         # autoencoder ops
         real_encoding, real_recon_loss = self.autoencoder(real_profile)
         fake_encoding, fake_recon_loss = self.autoencoder(fake_profile)
+
+        update_lambda = tf.assign(LAMBDA, tf.reduce_mean(fake_recon_loss)/tf.reduce_mean(real_recon_loss))
+        update_k = tf.assign(k, k + m * (LAMBDA * real_recon_loss - fake_recon_loss))
 
         # model parameters
         self.params = {}
