@@ -92,7 +92,7 @@ class GANMF(BaseRecommender):
                                            name='encoding')
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
-            loss = tf.keras.backend.mean(input_data*decoding)
+            loss = tf.losses.mean_squared_error(input_data, decoding)
             return encoding, loss
 
         ######################
@@ -114,6 +114,13 @@ class GANMF(BaseRecommender):
     def fit(self, num_factors=10, emb_dim=32, epochs=300, batch_size=32, d_lr=1e-4, g_lr=1e-4, d_steps=1, g_steps=1,
             d_reg=0, g_reg=0, m=1, recon_coefficient=1e-2, allow_worse=None, freq=None, after=0, metrics=['MAP'],
             sample_every=None, validation_evaluator=None, validation_set=None):
+        
+        k_init = 0
+        lambda_init = 0.1
+        k = tf.Variable(k_init, dtype=tf.float32, name='k')
+        LAMBDA = tf.Variable(lambda_init, dtype=tf.float32, name='lambda_k')
+        update_lambda = tf.assign(LAMBDA, tf.reduce_mean(fake_recon_loss)/tf.reduce_mean(real_recon_loss))
+        update_k = tf.assign(k, k + m * (LAMBDA * real_recon_loss - fake_recon_loss))
 
         # Construct the model config
         self.config = dict(locals())
@@ -154,7 +161,9 @@ class GANMF(BaseRecommender):
                                                            trainable=False))
 
         # losses
-        dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
+        # dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
+        #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
+        dloss = real_recon_loss + tf.maximum(0.0, real_recon_loss - k * fake_recon_loss) + \
                 d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
         gloss = (1 - recon_coefficient) * fake_recon_loss + \
                 recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
@@ -233,6 +242,8 @@ class GANMF(BaseRecommender):
 
             train_g_loss.append(mean_epoch_g_loss)
             train_d_loss.append(mean_epoch_d_loss)
+            self.sess.run(update_lambda)
+            self.sess.run(update_k)
 
             if validation_set is not None and sample_every is not None and epoch % sample_every == 0:
                 t_end = time.time()
