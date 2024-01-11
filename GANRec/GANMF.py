@@ -136,7 +136,8 @@ class GANMF(BaseRecommender):
         # gloss = (1 - recon_coefficient) * fake_recon_loss + \
         #         recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
         #         g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
-        gloss = autoencoder_wasserstein(input_data=real_profile, decoding=fake_profile)
+        gloss = autoencoder_wasserstein(input_data=real_profile, decoding=fake_profile) + \
+                 g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])      
         
         
         # update ops
