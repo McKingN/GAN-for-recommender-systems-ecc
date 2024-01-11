@@ -131,13 +131,15 @@ class GANMF(BaseRecommender):
                                                            trainable=False))
 
         # losses
-        dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
+        # dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
+        #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
+        dloss = autoencoder_wasserstein(input_data=real_profile, decoding=fake_profile) + \
                 d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
-        # gloss = (1 - recon_coefficient) * fake_recon_loss + \
-        #         recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
-        #         g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
-        gloss = recon_coefficient * autoencoder_wasserstein(input_data=real_profile, decoding=fake_profile) + \
-                 g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])      
+        gloss = (1 - recon_coefficient) * fake_recon_loss + \
+                recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
+                g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
+        # gloss = recon_coefficient * autoencoder_wasserstein(input_data=real_profile, decoding=fake_profile) + \
+        #          g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])      
         
         
         # update ops
