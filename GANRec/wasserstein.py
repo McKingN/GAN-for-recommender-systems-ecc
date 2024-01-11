@@ -23,7 +23,7 @@ def autoencoder_wasserstein(input_data, decoding):
             score = tf.layers.dense(x, units=1, name='score')
         return score
     # Calculer le score du discriminateur pour input_data
-    D_X = discriminator(input_data)
+    D_X = discriminator(input_data, reuse=False)
     # Calculer le score du discriminateur pour decoding
     D_decoding = discriminator(decoding, reuse=True)
     # Générer des valeurs aléatoires entre 0 et 1
