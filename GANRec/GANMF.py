@@ -17,6 +17,7 @@ import numpy as np
 import tensorflow as tf
 from datetime import datetime
 from Base.BaseRecommender import BaseRecommender
+from GANRec.wasserstein import autoencoder_wasserstein
 from Utils_ import EarlyStoppingScheduler, save_weights
 
 
@@ -67,7 +68,7 @@ class GANMF(BaseRecommender):
                                            name='decoding')
             # loss = tf.losses.mean_squared_error(input_data, decoding)
             # loss = tf.losses.hinge_loss(input_data, decoding)
-            loss = tf.losses.mean_squared_error(input_data, decoding)
+            loss = autoencoder_wasserstein(input_data, decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
             return encoding, loss
 
