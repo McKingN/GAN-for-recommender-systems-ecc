@@ -17,6 +17,7 @@ import numpy as np
 import tensorflow as tf
 from datetime import datetime
 from Base.BaseRecommender import BaseRecommender
+from GANRec.wasserstein import autoencoder_wasserstein
 from Utils_ import EarlyStoppingScheduler, save_weights
 
 
@@ -67,7 +68,7 @@ class GANMF(BaseRecommender):
                                            name='decoding')
             # loss = tf.losses.mean_squared_error(input_data, decoding)
             # loss = tf.losses.hinge_loss(input_data, decoding)
-            loss = tf.losses.mean_squared_error(input_data, decoding)
+            loss = autoencoder_wasserstein(input_data, decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
             return encoding, loss
 
@@ -132,10 +133,13 @@ class GANMF(BaseRecommender):
         # losses
         dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
                 d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
+        # gloss = (1 - recon_coefficient) * fake_recon_loss + \
+        #         recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
+        #         g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
         gloss = (1 - recon_coefficient) * fake_recon_loss + \
-                recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
+                recon_coefficient * autoencoder_wasserstein(real_encoding, fake_encoding) + \
                 g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
-
+        
         # update ops
         dtrain = opt_disc.minimize(dloss, var_list=self.params['D'])
         gtrain = opt_gen.minimize(gloss, var_list=self.params['G'])

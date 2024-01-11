@@ -18,9 +18,9 @@ def autoencoder_wasserstein(input_data, decoding):
 
     def discriminator(x):
         with tf.variable_scope('discriminator', reuse=tf.AUTO_REUSE):
-            h1 = tf.layers.dense(x, units=64, activation='relu', name='h1')
-            h2 = tf.layers.dense(h1, units=32, activation='relu', name='h2')
-            score = tf.layers.dense(h2, units=1, name='score')
+            # h1 = tf.layers.dense(x, units=64, activation='relu', name='h1')
+            # h2 = tf.layers.dense(h1, units=32, activation='relu', name='h2')
+            score = tf.layers.dense(x, units=1, name='score')
         return score
     # Calculer le score du discriminateur pour input_data
     D_X = discriminator(input_data)
