@@ -61,7 +61,7 @@ def distance_wasserstein(input_data, decoding):
     # update_lambda = tf.assign(LAMBDA, tf.maximum(LAMBDA * lambda_decay, lambda_min))
 
     def discriminator(x):
-        with tf.variable_scope('discriminator_second', reuse=False):
+        with tf.variable_scope('discriminator_second', reuse=tf.AUTO_REUSE):
             # h1 = tf.layers.dense(x, units=64, activation='relu', name='h1')
             # h2 = tf.layers.dense(h1, units=32, activation='relu', name='h2')
             score = tf.layers.dense(x, units=1, name='score')
