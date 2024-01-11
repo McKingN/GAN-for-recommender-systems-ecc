@@ -68,7 +68,7 @@ class GANMF(BaseRecommender):
                                            name='decoding')
             # loss = tf.losses.mean_squared_error(input_data, decoding)
             # loss = tf.losses.hinge_loss(input_data, decoding)
-            loss = autoencoder_wasserstein(input_data, decoding)
+            loss = autoencoder_wasserstein(input_data, decoding, tf.AUTO_REUSE)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
             return encoding, loss
 
@@ -137,7 +137,7 @@ class GANMF(BaseRecommender):
         #         recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
         #         g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
         gloss = (1 - recon_coefficient) * fake_recon_loss + \
-                recon_coefficient * autoencoder_wasserstein(real_encoding, fake_encoding) + \
+                recon_coefficient * autoencoder_wasserstein(real_encoding, fake_encoding, False) + \
                 g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
         
         # update ops
