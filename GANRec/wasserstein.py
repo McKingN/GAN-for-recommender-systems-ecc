@@ -45,3 +45,4 @@ def autoencoder_wasserstein(input_data, decoding):
     # Mettre à jour la valeur de lambda
     # sess.run(update_lambda)
     return loss
+
