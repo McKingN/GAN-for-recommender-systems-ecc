@@ -66,7 +66,13 @@ class GANMF(BaseRecommender):
                                            name='encoding')
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
-            loss = tf.losses.mean_squared_error(input_data, decoding)
+            # loss = tf.losses.mean_squared_error(input_data, decoding)
+            loss = tf.maximum(tf.reduce_mean(tf.nn.relu(input_data))-tf.reduce_mean(tf.nn.relu(decoding)),
+                              tf.reduce_mean(tf.nn.sigmoid(input_data))-tf.reduce_mean(tf.nn.sigmoid(decoding)),
+                              tf.reduce_mean(tf.nn.tanh(input_data))-tf.reduce_mean(tf.nn.tanh(decoding)),
+                              tf.reduce_mean(tf.nn.softmax(input_data))-tf.reduce_mean(tf.nn.softmax(decoding)),
+                              tf.reduce_mean(tf.nn.abs(input_data))-tf.reduce_mean(tf.nn.abs(decoding)),
+                              tf.losses.mean_squared_error(input_data, decoding))
             # loss = tf.losses.hinge_loss(input_data, decoding)
             # loss = -tf.reduce_mean(input_data) + tf.reduce_mean(decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
@@ -166,7 +172,7 @@ class GANMF(BaseRecommender):
                                                            trainable=False))
 
         # losses
-        dloss = real_recon_loss + self.wasserstein_disc(real_data=real_profile, fake_data=fake_profile, real_encoding=real_encoding, fake_encoding=fake_encoding, batch_size=batch_size) + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
+        dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
                 d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
         # dloss = real_recon_loss + tf.maximum(0.0, m * tf.reduce_mean(real_recon_loss) - tf.reduce_mean(fake_recon_loss)) + \
         #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
