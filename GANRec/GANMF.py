@@ -67,7 +67,7 @@ class GANMF(BaseRecommender):
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
             # loss = tf.losses.mean_squared_error(input_data, decoding)
-            loss_cosh = tf.keras.losses.LogCosh(tf.keras.losses.Reduction.NONE)
+            loss_cosh = tf.keras.losses.logcosh(tf.keras.losses.Reduction.NONE)
             loss = loss_cosh(input_data, decoding)
             # loss = autoencoder_wasserstein(input_data, decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
