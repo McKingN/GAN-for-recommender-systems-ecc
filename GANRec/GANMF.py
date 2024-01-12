@@ -173,7 +173,7 @@ class GANMF(BaseRecommender):
         #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
         # dloss = real_recon_loss + self.wasserstein_disc(real_data=real_profile, fake_data=fake_profile, real_recon_loss=real_recon_loss, fake_recon_loss=fake_recon_loss, batch_size=batch_size) + \
         #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
-        gloss = (1 - recon_coefficient) * fake_recon_loss + \
+        gloss = (1 - recon_coefficient) * tf.reduce_mean(fake_recon_loss) + \
                   self.wasserstein(real_data=real_profile, fake_data=fake_profile, real_encoding=real_encoding, fake_encoding=fake_encoding, batch_size=batch_size, recon_coefficient=recon_coefficient) + \
                 g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
         # gloss = recon_coefficient * autoencoder_wasserstein(input_data=real_profile, decoding=fake_profile) + \
