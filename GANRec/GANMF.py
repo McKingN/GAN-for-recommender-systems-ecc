@@ -68,7 +68,7 @@ class GANMF(BaseRecommender):
                                            name='decoding')
             # loss = tf.losses.mean_squared_error(input_data, decoding)
             loss_cosh = tf.keras.losses.logcosh
-            loss = loss_cosh(input_data, decoding)
+            loss = loss_cosh(input_data, decoding).flatten()
             # loss = autoencoder_wasserstein(input_data, decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
             return encoding, loss
@@ -248,8 +248,8 @@ class GANMF(BaseRecommender):
                     batch_g_loss.append(_gloss)
                     start_idx = end_idx
 
-            mean_epoch_g_loss = np.mean([loss.flatten() for loss in batch_g_loss])
-            mean_epoch_d_loss = np.mean([loss.flatten() for loss in batch_d_loss])
+            mean_epoch_g_loss = np.mean(batch_g_loss)
+            mean_epoch_d_loss = np.mean(batch_d_loss)
 
             train_g_loss.append(mean_epoch_g_loss)
             train_d_loss.append(mean_epoch_d_loss)
