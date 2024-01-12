@@ -167,7 +167,7 @@ class GANMF(BaseRecommender):
                                                            trainable=False))
 
         # losses
-        dloss = real_recon_loss + tf.maximum(0.0, m * tf.reduce_mean(real_recon_loss - fake_recon_loss)) + \
+        dloss = tf.reduce_mean(real_recon_loss) + tf.maximum(0.0, m * tf.reduce_mean(real_recon_loss - fake_recon_loss)) + \
                 d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
         # dloss = real_recon_loss + tf.maximum(0.0, m * tf.reduce_mean(real_recon_loss) - tf.reduce_mean(fake_recon_loss)) + \
         #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
