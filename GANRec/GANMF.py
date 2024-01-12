@@ -71,7 +71,6 @@ class GANMF(BaseRecommender):
                               tf.reduce_mean(tf.nn.sigmoid(input_data))-tf.reduce_mean(tf.nn.sigmoid(decoding)),
                               tf.reduce_mean(tf.nn.tanh(input_data))-tf.reduce_mean(tf.nn.tanh(decoding)),
                               tf.reduce_mean(tf.nn.softmax(input_data))-tf.reduce_mean(tf.nn.softmax(decoding)),
-                              tf.reduce_mean(tf.nn.abs(input_data))-tf.reduce_mean(tf.nn.abs(decoding)),
                               tf.losses.mean_squared_error(input_data, decoding))
             # loss = tf.losses.hinge_loss(input_data, decoding)
             # loss = -tf.reduce_mean(input_data) + tf.reduce_mean(decoding)
