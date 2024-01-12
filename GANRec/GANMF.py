@@ -89,7 +89,7 @@ class GANMF(BaseRecommender):
         self.autoencoder, self.generator = autoencoder, generator
 
     def wasserstein(self, real_data, fake_data, real_encoding, fake_encoding, batch_size, m):
-        disc_cost = tf.reduce_mean(fake_encoding) - m * tf.reduce_mean(real_encoding)
+        disc_cost = tf.maximum(0.0, tf.reduce_mean(fake_encoding) - m * tf.reduce_mean(real_encoding))
 
         alpha = tf.random_uniform(
                             shape=[batch_size,1], 
