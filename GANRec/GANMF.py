@@ -151,7 +151,7 @@ class GANMF(BaseRecommender):
         # losses
         # dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
         #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
-        dloss = real_recon_loss + self.wasserstein(real_data=real_profile, fake_data=fake_profile, real_encoding=real_encoding, fake_encoding=fake_encoding, batch_size=batch_size) + \
+        dloss = real_recon_loss + m * self.wasserstein(real_data=real_profile, fake_data=fake_profile, real_encoding=real_encoding, fake_encoding=fake_encoding, batch_size=batch_size) + \
                 d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
         gloss = (1 - recon_coefficient) * fake_recon_loss + \
                 recon_coefficient * tf.losses.mean_squared_error(real_encoding, fake_encoding) + \
