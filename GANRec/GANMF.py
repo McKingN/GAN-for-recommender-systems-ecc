@@ -66,17 +66,10 @@ class GANMF(BaseRecommender):
                                            name='encoding')
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
-            loss = tf.losses.huber_loss(input_data, decoding)
-            # losses = [
-            #     tf.reduce_mean(tf.maximum(0.0, tf.nn.relu(input_data))-tf.reduce_mean(tf.nn.relu(decoding))),
-            #     tf.reduce_mean(tf.maximum(0.0, tf.nn.sigmoid(input_data))-tf.reduce_mean(tf.nn.sigmoid(decoding))),
-            #     tf.reduce_mean(tf.maximum(0.0, tf.nn.tanh(input_data))-tf.reduce_mean(tf.nn.tanh(decoding))),
-            #     tf.reduce_mean(tf.maximum(0.0, tf.nn.softmax(input_data))-tf.reduce_mean(tf.nn.softmax(decoding))),
-            #     tf.losses.mean_squared_error(input_data, decoding)
-            # ]
-            # loss = tf.reduce_max(losses)
-            # loss = tf.losses.hinge_loss(input_data, decoding)
-            # loss = -tf.reduce_mean(input_data) + tf.reduce_mean(decoding)
+            # loss = tf.losses.mean_squared_error(input_data, decoding)
+            loss_cosh = tf.keras.losses.LogCosh(tf.keras.losses.Reduction.NONE)
+            loss = loss_cosh(input_data, decoding)
+            # loss = autoencoder_wasserstein(input_data, decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
             return encoding, loss
 
