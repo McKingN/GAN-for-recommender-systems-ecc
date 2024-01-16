@@ -414,7 +414,7 @@ class RecSysExp:
 
 def main(arguments):
     global train_mode, similarity_mode
-    EVALS = 60
+    EVALS = 80
     algo = None
     sim = None
     dataset = None
