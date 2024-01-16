@@ -189,9 +189,8 @@ class GANMF(BaseRecommender):
                     batch_g_loss.append(_gloss)
                     start_idx = end_idx
 
-            mean_epoch_g_loss = np.mean([loss.flatten() for loss in batch_g_loss])
-            mean_epoch_d_loss = np.mean([loss.flatten() for loss in batch_d_loss])
-
+            mean_epoch_g_loss = np.mean(batch_g_loss)
+            mean_epoch_d_loss = np.mean(batch_d_loss)
 
             train_g_loss.append(mean_epoch_g_loss)
             train_d_loss.append(mean_epoch_d_loss)
