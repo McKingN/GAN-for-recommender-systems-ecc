@@ -65,7 +65,7 @@ class GANMF(BaseRecommender):
                                            name='encoding')
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
-            loss = tf.losses.huber_loss(input_data, decoding)
+            loss = tf.losses.huber_loss(delta=0.8, labels=input_data, predictions=decoding)
             # loss_cosh = tf.keras.losses.logcosh
             # loss = tf.reshape(loss_cosh(input_data, decoding), [-1])
             # loss = autoencoder_wasserstein(input_data, decoding)
