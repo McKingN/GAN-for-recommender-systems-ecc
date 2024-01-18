@@ -17,7 +17,6 @@ import numpy as np
 import tensorflow as tf
 from datetime import datetime
 from Base.BaseRecommender import BaseRecommender
-from GANRec.wasserstein import autoencoder_wasserstein
 from Utils_ import EarlyStoppingScheduler, save_weights
 
 
@@ -66,11 +65,12 @@ class GANMF(BaseRecommender):
                                            name='encoding')
                 decoding = tf.layers.dense(encoding, units=self.num_items, kernel_initializer=glorot_uniform,
                                            name='decoding')
-            # loss = tf.losses.mean_squared_error(input_data, decoding)
-            loss_cosh = tf.keras.losses.logcosh
-            loss = tf.reshape(loss_cosh(input_data, decoding), [-1])
+            loss = tf.losses.huber_loss(delta=0.5, labels=input_data, predictions=decoding)
+            # loss_cosh = tf.keras.losses.logcosh
+            # loss = tf.reshape(loss_cosh(input_data, decoding), [-1])
             # loss = autoencoder_wasserstein(input_data, decoding)
             # loss = -tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=input_data, logits=decoding))
+            # loss = tf.keras.backend.mean(input_data * decoding)
             return encoding, loss
 
         ######################
@@ -107,8 +107,9 @@ class GANMF(BaseRecommender):
         disc_cost += LAMBDA*gradient_penalty
         return disc_cost
     
-    def wasserstein_disc(self, real_data, fake_data, real_encoding, fake_encoding, batch_size):
-        disc_cost = tf.reduce_mean(fake_encoding) - tf.reduce_mean(real_encoding)
+    def wasserstein_disc(self, real_data, fake_data, real_recon_loss, fake_recon_loss, batch_size):
+        # disc_cost = tf.losses.mean_squared_error(tf.reduce_mean(real_recon_loss), tf.reduce_mean(fake_recon_loss))
+        disc_cost = tf.reduce_mean(real_recon_loss) - tf.reduce_mean(fake_recon_loss)
         alpha = tf.random_uniform(
                             shape=[batch_size,1], 
                             minval=0.,
@@ -121,7 +122,7 @@ class GANMF(BaseRecommender):
         slopes = tf.sqrt(tf.reduce_sum(tf.square(gradients), reduction_indices=[1]))
         gradient_penalty = tf.reduce_mean((slopes-1.)**2)
         LAMBDA = 10
-        disc_cost += LAMBDA*gradient_penalty
+        # disc_cost += LAMBDA*gradient_penalty
         return disc_cost
     
     def fit(self, num_factors=10, emb_dim=32, epochs=300, batch_size=32, d_lr=1e-4, g_lr=1e-4, d_steps=1, g_steps=1,
@@ -167,13 +168,13 @@ class GANMF(BaseRecommender):
                                                            trainable=False))
 
         # losses
-        dloss = tf.reduce_mean(real_recon_loss) + tf.maximum(0.0, m * tf.reduce_mean(real_recon_loss - fake_recon_loss)) + \
-                d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
+        # dloss = real_recon_loss + tf.maximum(0.0, m * real_recon_loss - fake_recon_loss) + \
+        #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
         # dloss = real_recon_loss + tf.maximum(0.0, m * tf.reduce_mean(real_recon_loss) - tf.reduce_mean(fake_recon_loss)) + \
         #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
-        # dloss = real_recon_loss + self.wasserstein_disc(real_data=real_profile, fake_data=fake_profile, real_recon_loss=real_recon_loss, fake_recon_loss=fake_recon_loss, batch_size=batch_size) + \
-        #         d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
-        gloss = (1 - recon_coefficient) * tf.reduce_mean(fake_recon_loss) + \
+        dloss = self.wasserstein_disc(real_data=real_profile, fake_data=fake_profile, real_recon_loss=real_recon_loss, fake_recon_loss=fake_recon_loss, batch_size=batch_size) + \
+                d_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['D']])
+        gloss = (1 - recon_coefficient) * fake_recon_loss + \
                   self.wasserstein(real_data=real_profile, fake_data=fake_profile, real_encoding=real_encoding, fake_encoding=fake_encoding, batch_size=batch_size, recon_coefficient=recon_coefficient) + \
                 g_reg * tf.add_n([tf.nn.l2_loss(var) for var in self.params['G']])
         # gloss = recon_coefficient * autoencoder_wasserstein(input_data=real_profile, decoding=fake_profile) + \
